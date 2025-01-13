@@ -5,13 +5,13 @@ spring:
   #    exclude:
   #      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
   datasource:
-    url: jdbc:postgresql://localhost:5432/nome_do_banco
-    username: seu_usuario
-    password: sua_senha
+    url: jdbc:postgresql://localhost:9999/product_management
+    username: myuser
+    password: mypassword
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -21,3 +21,7 @@ security:
   jwt:
     token:
       secret-key: ${JWT_SECRET_KEY:secret-key}
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  enable-data-rest: false

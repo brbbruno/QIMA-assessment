@@ -6,8 +6,10 @@ import br.com.qima.assessment.bruno.presentation.dto.CategoryCreateDto;
 import br.com.qima.assessment.bruno.presentation.dto.CategoryDto;
 import br.com.qima.assessment.bruno.presentation.mapper.CategoryMapper;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,12 @@ public class CategoryService {
   public CategoryEntity getCategoryById(Long id) {
     return getCategoryFromRepository(id).orElseThrow(
         () -> new EntityNotFoundException("Category not found"));
+  }
+
+  public List<CategoryDto> getAllCategories() {
+    return categoryRepository.findAll().stream()
+        .map(CategoryMapper::toDto)
+        .collect(Collectors.toList());
   }
 
 

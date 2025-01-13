@@ -23,7 +23,8 @@ public class ProductService {
   public ProductDto createProduct(ProductDto productDto) {
     CategoryEntity category = categoryService.getCategoryById(productDto.getCategoryId());
     validateIfProductExists(productDto);
-    productRepository.save(ProductMapper.toEntity(productDto, category));
+    ProductEntity save = productRepository.save(ProductMapper.toEntity(productDto, category));
+    productDto.setId(save.getId());
     return productDto;
 
   }
@@ -67,17 +68,17 @@ public class ProductService {
 
   private String buildCategoryPath(CategoryEntity category) {
     StringBuilder categoryPath = new StringBuilder();
-    while (category.getParent() != null) {
-      categoryPath.insert(0, category.getName() + "/");
+    while (category != null && category.getName() != null) {
+      categoryPath.insert(0, "/" + category.getName());
       category = category.getParent();
     }
     return categoryPath.toString();
   }
 
   private void validateIfProductExists(ProductDto productCreateDTO) {
-    if (productRepository.findByIdOrName(productCreateDTO.getId(), productCreateDTO.getName())
+    if (!productRepository.findByIdOrName(productCreateDTO.getId(), productCreateDTO.getName())
         .isEmpty()) {
-      throw new EntityNotFoundException("Product not found");
+      throw new EntityNotFoundException("Product already exists");
     }
   }
 }
