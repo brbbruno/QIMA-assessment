@@ -2,6 +2,7 @@ package br.com.qima.assessment.bruno.domain.service;
 
 import br.com.qima.assessment.bruno.domain.exception.ExpiredJwtException;
 import br.com.qima.assessment.bruno.infra.configuration.jwt.JwtConfig;
+import com.fasterxml.jackson.databind.JsonNode;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.util.Date;
@@ -16,6 +17,7 @@ public class JwtTokenService {
 
   public boolean validateToken(String token) {
     try {
+
       Jwts.parser().setSigningKey(jwtConfig.getSecretKey()).parseClaimsJws(token);
       return true;
     } catch (Exception e) {

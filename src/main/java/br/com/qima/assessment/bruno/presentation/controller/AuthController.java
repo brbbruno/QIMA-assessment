@@ -33,9 +33,9 @@ public class AuthController {
     return jwtTokenService.createToken(request.getUsername());
   }
 
-  @PostMapping("c")
+  @PostMapping("/validate/session")
   @Operation(summary = "Validar se um token JWT é válido")
-  public void validateToken(@RequestBody String token) {
-    jwtTokenService.validateToken(token);
+  public void validateToken(@RequestBody TokenDto request) {
+    jwtTokenService.validateToken(request.getToken());
   }
 }

@@ -1,12 +1,17 @@
 import React, {useState, useEffect} from 'react';
 import {createProduct, updateProduct} from '../services/productApi';
+import {getCategories} from '../services/categoryApi';
 import {
   TextField,
   Button,
   Box,
   FormControlLabel,
   Switch,
-  Typography
+  Typography,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl
 } from '@mui/material';
 import {NumericFormat} from 'react-number-format';
 
@@ -21,6 +26,8 @@ const ProductForm = ({product, onSave, onCancel}) => {
     available: product?.available || false,
   });
 
+  const [categories, setCategories] = useState([]);
+
   useEffect(() => {
     setFormData({
       id: product?.id || null,
@@ -32,6 +39,14 @@ const ProductForm = ({product, onSave, onCancel}) => {
       available: product?.available || false,
     });
   }, [product]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const categories = await getCategories();
+      setCategories(categories);
+    };
+    fetchCategories();
+  }, []);
 
   const handleChange = (e) => {
     const {name, value} = e.target;
@@ -92,9 +107,29 @@ const ProductForm = ({product, onSave, onCancel}) => {
             required
             fullWidth
         />
-        <TextField label="Category Name" name="categoryName"
-                   value={formData.categoryName} onChange={handleChange}
-                   required fullWidth/>
+        <FormControl fullWidth required>
+          <InputLabel>Category Name</InputLabel>
+          <Select
+              name="categoryId"
+              value={formData.categoryId}
+              onChange={handleChange}
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 200,
+                    top: 'auto',
+                    bottom: 0,
+                  },
+                },
+              }}
+           variant={'filled'}>
+            {categories.map((category) => (
+                <MenuItem key={category.id} value={category.id}>
+                  {category.name}
+                </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         <FormControlLabel control={<Switch checked={formData.available}
                                            onChange={handleSwitchChange}/>}
                           label="Available"/>
