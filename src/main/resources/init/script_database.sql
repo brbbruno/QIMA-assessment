@@ -37,9 +37,9 @@ VALUES ('Instant Pot Duo', 'Multi-use programmable pressure cooker', 99.99, 7, T
        ('Air Fryer XL', 'Large capacity air fryer with digital display', 129.99, 7, TRUE);
 
 INSERT INTO product_entity (name, description, price, category_id, available)
-VALUES ('Mens Leather Jacket', 'Black leather jacket, slim fit', 199.99, 10, TRUE),
-       ('Casual Sneakers', 'Comfortable sneakers for daily use', 69.99, 10, TRUE);
+VALUES ('Mens Leather Jacket', 'Black leather jacket, slim fit', 199.99, 9, TRUE),
+       ('Casual Sneakers', 'Comfortable sneakers for daily use', 69.99, 9, TRUE);
 
 INSERT INTO product_entity (name, description, price, category_id, available)
-VALUES ('Womens Handbag', 'Stylish handbag with multiple compartments', 79.99, 11, TRUE),
-       ('Ankle Boots', 'Elegant ankle boots for formal wear', 129.99, 11, TRUE);
+VALUES ('Womens Handbag', 'Stylish handbag with multiple compartments', 79.99, 10, TRUE),
+       ('Ankle Boots', 'Elegant ankle boots for formal wear', 129.99, 10, TRUE);

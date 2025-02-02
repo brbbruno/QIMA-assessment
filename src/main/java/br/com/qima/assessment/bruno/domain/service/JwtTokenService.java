@@ -1,5 +1,6 @@
 package br.com.qima.assessment.bruno.domain.service;
 
+import br.com.qima.assessment.bruno.domain.exception.ExpiredJwtException;
 import br.com.qima.assessment.bruno.infra.configuration.jwt.JwtConfig;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -18,7 +19,7 @@ public class JwtTokenService {
       Jwts.parser().setSigningKey(jwtConfig.getSecretKey()).parseClaimsJws(token);
       return true;
     } catch (Exception e) {
-      return false;
+      throw new ExpiredJwtException("Token expired, please login again!");
     }
   }
 

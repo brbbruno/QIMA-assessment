@@ -1,45 +1,30 @@
-import axios from 'axios';
+import { createApi } from './apiConfig';
 
-const baseUrl = 'http://localhost:8888';
-const path = 'v1/api/categories';
-const api = axios.create({
-  baseURL: baseUrl,
-  headers: {
-    "Content-Type": "application/json",
-  },
-  withCredentials: true,
-});
-
-const getAuthHeaders = () => {
-  const token = sessionStorage.getItem('authToken');
-  return {
-    Authorization: `Bearer ${token}`,
-  };
-};
+const { api, getAuthHeaders } = createApi('v1/api/categories');
 
 export const getCategories = async () => {
-  const response = await api.get(path, {
+  const response = await api.get('', {
     headers: getAuthHeaders(),
   });
   return response.data;
 };
 
 export const createCategory = async (category) => {
-  const response = await api.post(path, category, {
+  const response = await api.post('', category, {
     headers: getAuthHeaders(),
   });
   return response.data;
 };
 
 export const updateCategory = async (id, category) => {
-  const response = await api.put(`${path}/${id}`, category, {
+  const response = await api.put(`/${id}`, category, {
     headers: getAuthHeaders(),
   });
   return response.data;
 };
 
 export const deleteCategory = async (id) => {
-  await api.delete(`${path}/${id}`, {
+  await api.delete(`/${id}`, {
     headers: getAuthHeaders(),
   });
 };

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("v1/auth")
 @RequiredArgsConstructor
 @Tag(name = "Auth Controller", description = "Endpoints de autenticação")
 public class AuthController {
@@ -33,7 +33,7 @@ public class AuthController {
     return jwtTokenService.createToken(request.getUsername());
   }
 
-  @PostMapping("/validate/session")
+  @PostMapping("c")
   @Operation(summary = "Validar se um token JWT é válido")
   public void validateToken(@RequestBody String token) {
     jwtTokenService.validateToken(token);
