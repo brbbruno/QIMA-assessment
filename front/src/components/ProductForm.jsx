@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {createProduct, updateProduct} from '../services/api';
+import {createProduct, updateProduct} from '../services/productApi';
 import {
   TextField,
   Button,
@@ -8,6 +8,7 @@ import {
   Switch,
   Typography
 } from '@mui/material';
+import {NumericFormat} from 'react-number-format';
 
 const ProductForm = ({product, onSave, onCancel}) => {
   const [formData, setFormData] = useState({
@@ -41,16 +42,22 @@ const ProductForm = ({product, onSave, onCancel}) => {
     setFormData((prev) => ({...prev, available: e.target.checked}));
   };
 
+  const handlePriceChange = (values) => {
+    const {value} = values;
+    setFormData((prev) => ({...prev, price: value}));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (formData.id) {
-      await updateProduct(formData.id, formData);
-    } else {
-      await createProduct(formData);
-    }
+    let savedProduct;
 
-    onSave(formData);
+    if (formData.id) {
+      savedProduct = await updateProduct(formData.id, formData);
+    } else {
+      savedProduct = await createProduct(formData);
+    }
+    onSave(savedProduct);
   };
 
   return (
@@ -71,9 +78,20 @@ const ProductForm = ({product, onSave, onCancel}) => {
         <TextField label="Description" name="description"
                    value={formData.description} onChange={handleChange}
                    fullWidth/>
-        <TextField label="Price" name="price" type="number"
-                   value={formData.price} onChange={handleChange} required
-                   fullWidth/>
+        <NumericFormat
+            label="Price"
+            name="price"
+            value={formData.price}
+            onValueChange={handlePriceChange}
+            prefix="USD $"
+            decimalScale={2}
+            customInput={TextField}
+            allowNegative={false}
+            thousandSeparator={'.'}
+            decimalSeparator={','}
+            required
+            fullWidth
+        />
         <TextField label="Category Name" name="categoryName"
                    value={formData.categoryName} onChange={handleChange}
                    required fullWidth/>

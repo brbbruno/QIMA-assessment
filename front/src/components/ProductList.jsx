@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { getProducts, deleteProduct } from '../services/api';
+import React, {useEffect, useState} from 'react';
+import {getProducts, deleteProduct} from '../services/productApi';
 import {
   Table,
   TableBody,
@@ -24,6 +24,7 @@ const ProductList = () => {
   const [orderBy, setOrderBy] = useState('name');
   const [orderDirection, setOrderDirection] = useState('asc');
   const [openEdit, setOpenEdit] = useState(false);
+  const [openCreate, setOpenCreate] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [productToDelete, setProductToDelete] = useState(null);
@@ -38,7 +39,8 @@ const ProductList = () => {
 
   const handleDelete = async () => {
     await deleteProduct(productToDelete.id);
-    setProducts((prev) => prev.filter((product) => product.id !== productToDelete.id));
+    setProducts(
+        (prev) => prev.filter((product) => product.id !== productToDelete.id));
     setOpenConfirm(false);
     setProductToDelete(null);
   };
@@ -70,8 +72,17 @@ const ProductList = () => {
   };
 
   const handleSave = (updatedProduct) => {
-    setProducts((prev) => prev.map((product) => (product.id === updatedProduct.id ? updatedProduct : product)));
+    setProducts((prev) => { const existingProductIndex = prev.findIndex((product) => product.id === updatedProduct.id);
+      if (existingProductIndex !== -1) {
+        const updatedProducts = [...prev];
+        updatedProducts[existingProductIndex] = updatedProduct;
+        return updatedProducts;
+      } else {
+        return [...prev, updatedProduct];
+      }
+    });
     setOpenEdit(false);
+    setOpenCreate(false);
     setSelectedProduct(null);
   };
 
@@ -85,10 +96,23 @@ const ProductList = () => {
     setProductToDelete(null);
   };
 
+  const handleOpenCreate = () => {
+    setSelectedProduct(null);
+    setOpenCreate(true);
+  };
+
+  const handleCloseCreate = () => {
+    setOpenCreate(false);
+  };
+
   return (
-      <Box sx={{ padding: 3 }}>
-        <Typography variant="h4" component="div" sx={{ textAlign: 'center', marginBottom: 3 }}>Product List</Typography>
-        <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: 2 }}>
+      <Box sx={{padding: 3}}>
+        <Typography variant="h4" component="div"
+                    sx={{textAlign: 'center', marginBottom: 3}}>Product
+          List</Typography>
+        <Button variant="contained" color="primary" onClick={handleOpenCreate}
+                sx={{marginBottom: 2}}>Add Product</Button>
+        <TableContainer component={Paper} sx={{boxShadow: 3, borderRadius: 2}}>
           <Table>
             <TableHead>
               <TableRow>
@@ -104,7 +128,8 @@ const ProductList = () => {
                 <TableCell>
                   <TableSortLabel
                       active={orderBy === 'description'}
-                      direction={orderBy === 'description' ? orderDirection : 'asc'}
+                      direction={orderBy === 'description' ? orderDirection
+                          : 'asc'}
                       onClick={() => handleSort('description')}
                   >
                     Description
@@ -122,7 +147,8 @@ const ProductList = () => {
                 <TableCell>
                   <TableSortLabel
                       active={orderBy === 'categoryName'}
-                      direction={orderBy === 'categoryName' ? orderDirection : 'asc'}
+                      direction={orderBy === 'categoryName' ? orderDirection
+                          : 'asc'}
                       onClick={() => handleSort('categoryName')}
                   >
                     Category
@@ -139,8 +165,12 @@ const ProductList = () => {
                     <TableCell>${product.price}</TableCell>
                     <TableCell>{product.categoryName}</TableCell>
                     <TableCell>
-                      <Button variant="contained" color="primary" sx={{ marginRight: 1 }} onClick={() => handleEdit(product)}>Edit</Button>
-                      <Button variant="outlined" color="error" onClick={() => handleOpenConfirm(product)}>Delete</Button>
+                      <Button variant="contained" color="primary"
+                              sx={{marginRight: 1}}
+                              onClick={() => handleEdit(product)}>Edit</Button>
+                      <Button variant="outlined" color="error"
+                              onClick={() => handleOpenConfirm(
+                                  product)}>Delete</Button>
                     </TableCell>
                   </TableRow>
               ))}
@@ -148,16 +178,27 @@ const ProductList = () => {
           </Table>
         </TableContainer>
 
-        <Dialog open={openEdit} onClose={handleCloseEdit} maxWidth="sm" fullWidth>
+        <Dialog open={openEdit} onClose={handleCloseEdit} maxWidth="sm"
+                fullWidth>
           <DialogContent>
-            <ProductForm product={selectedProduct} onSave={handleSave} onCancel={handleCloseEdit} />
+            <ProductForm product={selectedProduct} onSave={handleSave}
+                         onCancel={handleCloseEdit}/>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={openCreate} onClose={handleCloseCreate} maxWidth="sm"
+                fullWidth>
+          <DialogContent>
+            <ProductForm product={null} onSave={handleSave}
+                         onCancel={handleCloseCreate}/>
           </DialogContent>
         </Dialog>
 
         <Dialog open={openConfirm} onClose={handleCloseConfirm}>
           <DialogTitle>Confirm Deletion</DialogTitle>
           <DialogContent>
-            <Typography>Are you sure you want to delete this product?</Typography>
+            <Typography>Are you sure you want to delete this
+              product?</Typography>
           </DialogContent>
           <DialogActions>
             <Button onClick={handleDelete} color="primary">Yes</Button>

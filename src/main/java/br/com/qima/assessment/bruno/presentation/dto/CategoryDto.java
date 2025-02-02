@@ -17,7 +17,6 @@ public class CategoryDto {
   private Long id;
   private String name;
   private CategoryDto parent;
-  private List<CategoryDto> subCategories;
 
 
 }

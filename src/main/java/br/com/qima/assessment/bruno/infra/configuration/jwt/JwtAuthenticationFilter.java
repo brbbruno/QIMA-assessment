@@ -1,5 +1,6 @@
 package br.com.qima.assessment.bruno.infra.configuration.jwt;
 
+import br.com.qima.assessment.bruno.domain.service.JwtTokenService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
@@ -7,6 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,13 +19,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
 @Order(1)
+@RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   private final JwtConfig jwtConfig;
-
-  public JwtAuthenticationFilter(JwtConfig jwtConfig) {
-    this.jwtConfig = jwtConfig;
-  }
+  private final JwtTokenService jwtTokenService;
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -31,7 +31,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
     String jwt = getJwtFromRequest(request);
 
-    if (jwt != null && validateToken(jwt)) {
+    if (jwt != null && jwtTokenService.validateToken(jwt)) {
       Claims claims = Jwts.parser()
           .setSigningKey(jwtConfig.getSecretKey())
           .parseClaimsJws(jwt)
@@ -54,14 +54,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       return bearerToken.substring(7);
     }
     return null;
-  }
-
-  private boolean validateToken(String token) {
-    try {
-      Jwts.parser().setSigningKey(jwtConfig.getSecretKey()).parseClaimsJws(token);
-      return true;
-    } catch (Exception e) {
-      return false;
-    }
   }
 }

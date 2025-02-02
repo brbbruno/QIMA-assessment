@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/categories")
+@RequestMapping("v1/api/categories")
 @RequiredArgsConstructor
 @Tag(name = "Category Controller", description = "Endpoints de categorias")
 @CrossOrigin(origins = "http://localhost:3000")

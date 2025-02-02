@@ -1,19 +1,26 @@
-package br.com.qima.assessment.bruno.infra.configuration.jwt;
+package br.com.qima.assessment.bruno.domain.service;
 
+import br.com.qima.assessment.bruno.infra.configuration.jwt.JwtConfig;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.util.Date;
-import org.springframework.stereotype.Component;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
-@Component
-public class JwtTokenProvider {
+@Service
+@RequiredArgsConstructor
+public class JwtTokenService {
 
   private final JwtConfig jwtConfig;
 
-  public JwtTokenProvider(JwtConfig jwtConfig) {
-    this.jwtConfig = jwtConfig;
+  public boolean validateToken(String token) {
+    try {
+      Jwts.parser().setSigningKey(jwtConfig.getSecretKey()).parseClaimsJws(token);
+      return true;
+    } catch (Exception e) {
+      return false;
+    }
   }
-
 
   public String createToken(String username) {
     Date now = new Date();
