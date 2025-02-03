@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("v1/api/categories")
 @RequiredArgsConstructor
 @Tag(name = "Category Controller", description = "Category endpoints")
-@CrossOrigin(origins = "http://localhost:3000")
 public class CategoryController {
 
   private final CategoryService categoryService;
