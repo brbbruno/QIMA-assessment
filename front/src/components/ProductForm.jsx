@@ -45,7 +45,7 @@ const ProductForm = ({product, onSave, onCancel}) => {
       const categories = await getCategories();
       setCategories(categories);
     };
-    fetchCategories();
+    fetchCategories().then(r => r);
   }, []);
 
   const handleChange = (e) => {
@@ -122,7 +122,7 @@ const ProductForm = ({product, onSave, onCancel}) => {
                   },
                 },
               }}
-           variant={'filled'}>
+              variant={'filled'}>
             {categories.map((category) => (
                 <MenuItem key={category.id} value={category.id}>
                   {category.name}

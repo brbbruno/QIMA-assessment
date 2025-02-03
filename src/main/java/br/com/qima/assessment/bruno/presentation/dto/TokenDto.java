@@ -1,4 +1,4 @@
-package br.com.qima.assessment.bruno.presentation.controller;
+package br.com.qima.assessment.bruno.presentation.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

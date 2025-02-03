@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {getProducts, deleteProduct} from '../services/productApi';
+import React, { useEffect, useState } from 'react';
+import { getProducts, deleteProduct } from '../services/productApi';
 import {
   Table,
   TableBody,
@@ -15,8 +15,10 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions
+  DialogActions,
+  Grid,
 } from '@mui/material';
+import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import ProductForm from './ProductForm';
 
 const ProductList = () => {
@@ -34,13 +36,12 @@ const ProductList = () => {
       const data = await getProducts();
       setProducts(data);
     };
-    fetchProducts();
+    fetchProducts().then(r => r);
   }, []);
 
   const handleDelete = async () => {
     await deleteProduct(productToDelete.id);
-    setProducts(
-        (prev) => prev.filter((product) => product.id !== productToDelete.id));
+    setProducts((prev) => prev.filter((product) => product.id !== productToDelete.id));
     setOpenConfirm(false);
     setProductToDelete(null);
   };
@@ -72,7 +73,8 @@ const ProductList = () => {
   };
 
   const handleSave = (updatedProduct) => {
-    setProducts((prev) => { const existingProductIndex = prev.findIndex((product) => product.id === updatedProduct.id);
+    setProducts((prev) => {
+      const existingProductIndex = prev.findIndex((product) => product.id === updatedProduct.id);
       if (existingProductIndex !== -1) {
         const updatedProducts = [...prev];
         updatedProducts[existingProductIndex] = updatedProduct;
@@ -106,106 +108,141 @@ const ProductList = () => {
   };
 
   return (
-      <Box sx={{padding: 3}}>
-        <Typography variant="h4" component="div"
-                    sx={{textAlign: 'center', marginBottom: 3}}>Product
-          List</Typography>
-        <Button variant="contained" color="primary" onClick={handleOpenCreate}
-                sx={{marginBottom: 2}}>Add Product</Button>
-        <TableContainer component={Paper} sx={{boxShadow: 3, borderRadius: 2}}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>
-                  <TableSortLabel
-                      active={orderBy === 'name'}
-                      direction={orderBy === 'name' ? orderDirection : 'asc'}
-                      onClick={() => handleSort('name')}
+    <Box sx={{ padding: 4, backgroundColor: '#f5f5f5', minHeight: '100vh' }}>
+      <Grid container spacing={2} alignItems="center" justifyContent="space-between" sx={{ marginBottom: 3 }}>
+        <Grid item>
+          <Typography variant="h4" component="div" sx={{ color: '#333' }}>
+            List of Products
+          </Typography>
+        </Grid>
+        <Grid item>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            onClick={handleOpenCreate}
+          >
+            Add a new product
+          </Button>
+        </Grid>
+      </Grid>
+      <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: 2 }}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>
+                <TableSortLabel
+                  active={orderBy === 'name'}
+                  direction={orderBy === 'name' ? orderDirection : 'asc'}
+                  onClick={() => handleSort('name')}
+                >
+                  Name
+                </TableSortLabel>
+              </TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={orderBy === 'description'}
+                  direction={orderBy === 'description' ? orderDirection : 'asc'}
+                  onClick={() => handleSort('description')}
+                >
+                  Description
+                </TableSortLabel>
+              </TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={orderBy === 'price'}
+                  direction={orderBy === 'price' ? orderDirection : 'asc'}
+                  onClick={() => handleSort('price')}
+                >
+                  Price
+                </TableSortLabel>
+              </TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={orderBy === 'categoryName'}
+                  direction={orderBy === 'categoryName' ? orderDirection : 'asc'}
+                  onClick={() => handleSort('categoryName')}
+                >
+                  Category
+                </TableSortLabel>
+              </TableCell>
+              <TableCell align="center">Ações</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {sortedProducts.map((product, index) => (
+              <TableRow
+                key={product.id}
+                sx={{
+                  bgcolor: index % 2 === 0 ? 'background.paper' : '#f9f9f9',
+                  '&:hover': { backgroundColor: '#e3f2fd' },
+                }}
+              >
+                <TableCell>{product.name}</TableCell>
+                <TableCell>{product.description}</TableCell>
+                <TableCell>${product.price.toFixed(2)}</TableCell>
+                <TableCell>{product.categoryName}</TableCell>
+                <TableCell align="center">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    size="small"
+                    startIcon={<EditIcon />}
+                    sx={{ marginRight: 1 }}
+                    onClick={() => handleEdit(product)}
                   >
-                    Name
-                  </TableSortLabel>
-                </TableCell>
-                <TableCell>
-                  <TableSortLabel
-                      active={orderBy === 'description'}
-                      direction={orderBy === 'description' ? orderDirection
-                          : 'asc'}
-                      onClick={() => handleSort('description')}
+                    Edit
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    size="small"
+                    startIcon={<DeleteIcon />}
+                    onClick={() => handleOpenConfirm(product)}
                   >
-                    Description
-                  </TableSortLabel>
+                    Delete
+                  </Button>
                 </TableCell>
-                <TableCell>
-                  <TableSortLabel
-                      active={orderBy === 'price'}
-                      direction={orderBy === 'price' ? orderDirection : 'asc'}
-                      onClick={() => handleSort('price')}
-                  >
-                    Price
-                  </TableSortLabel>
-                </TableCell>
-                <TableCell>
-                  <TableSortLabel
-                      active={orderBy === 'categoryName'}
-                      direction={orderBy === 'categoryName' ? orderDirection
-                          : 'asc'}
-                      onClick={() => handleSort('categoryName')}
-                  >
-                    Category
-                  </TableSortLabel>
-                </TableCell>
-                <TableCell>Actions</TableCell>
               </TableRow>
-            </TableHead>
-            <TableBody>
-              {sortedProducts.map((product) => (
-                  <TableRow key={product.id}>
-                    <TableCell>{product.name}</TableCell>
-                    <TableCell>{product.description}</TableCell>
-                    <TableCell>${product.price}</TableCell>
-                    <TableCell>{product.categoryName}</TableCell>
-                    <TableCell>
-                      <Button variant="contained" color="primary"
-                              sx={{marginRight: 1}}
-                              onClick={() => handleEdit(product)}>Edit</Button>
-                      <Button variant="outlined" color="error"
-                              onClick={() => handleOpenConfirm(
-                                  product)}>Delete</Button>
-                    </TableCell>
-                  </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
-        <Dialog open={openEdit} onClose={handleCloseEdit} maxWidth="sm"
-                fullWidth>
-          <DialogContent>
-            <ProductForm product={selectedProduct} onSave={handleSave}
-                         onCancel={handleCloseEdit}/>
-          </DialogContent>
-        </Dialog>
+      {/* Dialog de Edição */}
+      <Dialog open={openEdit} onClose={handleCloseEdit} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ backgroundColor: '#1976d2', color: '#fff' }}>
+          {selectedProduct ? 'Edit Product' : 'Add Product'}
+        </DialogTitle>
+        <DialogContent>
+          <ProductForm product={selectedProduct} onSave={handleSave} onCancel={handleCloseEdit} />
+        </DialogContent>
+      </Dialog>
 
-        <Dialog open={openCreate} onClose={handleCloseCreate} maxWidth="sm"
-                fullWidth>
-          <DialogContent>
-            <ProductForm product={null} onSave={handleSave}
-                         onCancel={handleCloseCreate}/>
-          </DialogContent>
-        </Dialog>
+      {/* Dialog de Criação */}
+      <Dialog open={openCreate} onClose={handleCloseCreate} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ backgroundColor: '#1976d2', color: '#fff' }}>Add new Product</DialogTitle>
+        <DialogContent>
+          <ProductForm product={null} onSave={handleSave} onCancel={handleCloseCreate} />
+        </DialogContent>
+      </Dialog>
 
-        <Dialog open={openConfirm} onClose={handleCloseConfirm}>
-          <DialogTitle>Confirm Deletion</DialogTitle>
-          <DialogContent>
-            <Typography>Are you sure you want to delete this
-              product?</Typography>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleDelete} color="primary">Yes</Button>
-            <Button onClick={handleCloseConfirm} color="secondary">No</Button>
-          </DialogActions>
-        </Dialog>
-      </Box>
+      {/* Dialog de Confirmação de Deleção */}
+      <Dialog open={openConfirm} onClose={handleCloseConfirm}>
+        <DialogTitle>Confirm item deletion?</DialogTitle>
+        <DialogContent>
+          <Typography>Are you sure you want to delete this product?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDelete} color="error" variant="contained">
+            Yes
+          </Button>
+          <Button onClick={handleCloseConfirm} color="primary" variant="outlined">
+            No
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
   );
 };
 
