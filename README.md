@@ -59,16 +59,16 @@ Material-UI.
 
 ### Products
 
-- `GET /api/products` - Lists all products.
-- `POST /api/products` - Creates a new product.
-- `PUT /api/products/{id}` - Updates an existing product.
-- `DELETE /api/products/{id}` - Deletes a product.
+- `GET /productApi/products` - Lists all products.
+- `POST /productApi/products` - Creates a new product.
+- `PUT /productApi/products/{id}` - Updates an existing product.
+- `DELETE /productApi/products/{id}` - Deletes a product.
 
 ### Categories
 
-- `GET /api/categories` - Lists all categories.
-- `POST /api/categories` - Creates a new category.
-- `PUT /api/categories/{id}` - Updates an existing category.
+- `GET /productApi/categories` - Lists all categories.
+- `POST /productApi/categories` - Creates a new category.
+- `PUT /productApi/categories/{id}` - Updates an existing category.
 
 ### Authentication
 

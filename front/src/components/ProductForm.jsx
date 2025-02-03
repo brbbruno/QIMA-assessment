@@ -1,13 +1,19 @@
 import React, {useState, useEffect} from 'react';
-import {createProduct, updateProduct} from '../services/api';
+import {createProduct, updateProduct} from '../services/productApi';
+import {getCategories} from '../services/categoryApi';
 import {
   TextField,
   Button,
   Box,
   FormControlLabel,
   Switch,
-  Typography
+  Typography,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl
 } from '@mui/material';
+import {NumericFormat} from 'react-number-format';
 
 const ProductForm = ({product, onSave, onCancel}) => {
   const [formData, setFormData] = useState({
@@ -19,6 +25,8 @@ const ProductForm = ({product, onSave, onCancel}) => {
     categoryId: product?.categoryId || null,
     available: product?.available || false,
   });
+
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     setFormData({
@@ -32,6 +40,14 @@ const ProductForm = ({product, onSave, onCancel}) => {
     });
   }, [product]);
 
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const categories = await getCategories();
+      setCategories(categories);
+    };
+    fetchCategories().then(r => r);
+  }, []);
+
   const handleChange = (e) => {
     const {name, value} = e.target;
     setFormData((prev) => ({...prev, [name]: value}));
@@ -41,16 +57,22 @@ const ProductForm = ({product, onSave, onCancel}) => {
     setFormData((prev) => ({...prev, available: e.target.checked}));
   };
 
+  const handlePriceChange = (values) => {
+    const {value} = values;
+    setFormData((prev) => ({...prev, price: value}));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (formData.id) {
-      await updateProduct(formData.id, formData);
-    } else {
-      await createProduct(formData);
-    }
+    let savedProduct;
 
-    onSave(formData);
+    if (formData.id) {
+      savedProduct = await updateProduct(formData.id, formData);
+    } else {
+      savedProduct = await createProduct(formData);
+    }
+    onSave(savedProduct);
   };
 
   return (
@@ -71,12 +93,43 @@ const ProductForm = ({product, onSave, onCancel}) => {
         <TextField label="Description" name="description"
                    value={formData.description} onChange={handleChange}
                    fullWidth/>
-        <TextField label="Price" name="price" type="number"
-                   value={formData.price} onChange={handleChange} required
-                   fullWidth/>
-        <TextField label="Category Name" name="categoryName"
-                   value={formData.categoryName} onChange={handleChange}
-                   required fullWidth/>
+        <NumericFormat
+            label="Price"
+            name="price"
+            value={formData.price}
+            onValueChange={handlePriceChange}
+            prefix="USD $"
+            decimalScale={2}
+            customInput={TextField}
+            allowNegative={false}
+            thousandSeparator={'.'}
+            decimalSeparator={','}
+            required
+            fullWidth
+        />
+        <FormControl fullWidth required>
+          <InputLabel>Category Name</InputLabel>
+          <Select
+              name="categoryId"
+              value={formData.categoryId}
+              onChange={handleChange}
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 200,
+                    top: 'auto',
+                    bottom: 0,
+                  },
+                },
+              }}
+              variant={'filled'}>
+            {categories.map((category) => (
+                <MenuItem key={category.id} value={category.id}>
+                  {category.name}
+                </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         <FormControlLabel control={<Switch checked={formData.available}
                                            onChange={handleSwitchChange}/>}
                           label="Available"/>

@@ -1,5 +1,6 @@
 package br.com.qima.assessment.bruno.presentation.controller;
 
+import br.com.qima.assessment.bruno.domain.exception.ExpiredJwtException;
 import br.com.qima.assessment.bruno.domain.exception.InvalidUserException;
 import br.com.qima.assessment.bruno.domain.exception.UserNotFoundException;
 import br.com.qima.assessment.bruno.presentation.dto.ErrorInfoDto;
@@ -16,7 +17,7 @@ public class ResourceAdvice {
     return new ResponseEntity<>(createErrorInfoDto(e, 404), HttpStatus.NOT_FOUND);
   }
 
-  @ExceptionHandler(InvalidUserException.class)
+  @ExceptionHandler({InvalidUserException.class, ExpiredJwtException.class})
   public ResponseEntity<ErrorInfoDto> handleInvalidUserException(InvalidUserException e) {
     return new ResponseEntity<>(createErrorInfoDto(e, 401), HttpStatus.UNAUTHORIZED);
   }

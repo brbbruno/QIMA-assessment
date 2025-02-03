@@ -34,3 +34,5 @@ build/
 /mvnw.cmd
 /mvnw
 /.mvn/wrapper/maven-wrapper.properties
+/front/node_modules/
+/front/package-lock.json

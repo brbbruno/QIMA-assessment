@@ -14,8 +14,9 @@ public class CategoryMapper {
 
   public static CategoryDto toDto(CategoryEntity categoryEntity) {
     return CategoryDto.builder()
+        .id(categoryEntity.getId())
         .name(categoryEntity.getName())
-        .parent(toDto(categoryEntity.getParent()))
+        .parent(categoryEntity.getParent() != null ? toDto(categoryEntity.getParent()) : null)
         .build();
   }
 

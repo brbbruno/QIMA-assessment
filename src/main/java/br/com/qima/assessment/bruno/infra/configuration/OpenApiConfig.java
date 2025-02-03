@@ -10,7 +10,7 @@ import org.springframework.data.rest.webmvc.mapping.Associations;
 
 @Configuration
 public class OpenApiConfig {
-
+//TODO MUDAR AS DESCRIÇÕES REAIS DA API
   @Bean
   public OpenAPI customOpenAPI() {
     return new OpenAPI()

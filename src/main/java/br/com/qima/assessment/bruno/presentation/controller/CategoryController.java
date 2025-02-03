@@ -11,29 +11,29 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/categories")
+@RequestMapping("v1/api/categories")
 @RequiredArgsConstructor
-@Tag(name = "Category Controller", description = "Endpoints de categorias")
+@Tag(name = "Category Controller", description = "Category endpoints")
 @CrossOrigin(origins = "http://localhost:3000")
 public class CategoryController {
 
   private final CategoryService categoryService;
 
   @GetMapping
-  @Operation(summary = "Obter todas as categorias")
+  @Operation(summary = "Get all categories")
   public ResponseEntity<List<CategoryDto>> getAllCategories() {
     return ResponseEntity.ok(categoryService.getAllCategories());
   }
 
   @PostMapping
-  @Operation(summary = "Criar uma nova categoria")
+  @Operation(summary = "Create a new category")
   public ResponseEntity<CategoryDto> createCategory(@RequestBody CategoryCreateDto categoryDto) {
     CategoryDto category = categoryService.createCategory(categoryDto);
     return ResponseEntity.status(201).body(category);
   }
 
   @PutMapping("/{id}")
-  @Operation(summary = "Atualizar uma categoria existente")
+  @Operation(summary = "Update an existing category")
   public ResponseEntity<CategoryDto> updateCategory(
       @PathVariable Long id,
       @RequestBody CategoryCreateDto categoryDto) {
